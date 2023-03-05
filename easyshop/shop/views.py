@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404
 import requests
 from django.views.generic import ListView, DetailView
 from .models import Category, Product
+from cart.forms import CartAddProductForm
 
 
 class ProductListView(ListView):
@@ -14,15 +15,15 @@ class ProductListView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        if self.kwargs.get('category_slug'):
-            category = get_object_or_404(Category, slug=self.kwargs['category_slug'])
+        if self.kwargs.get('slug'):
+            category = get_object_or_404(Category, slug=self.kwargs['slug'])
             queryset = queryset.filter(category=category)
         queryset = queryset.filter(available=True)
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        category_slug = self.kwargs.get('category_slug')
+        category_slug = self.kwargs.get('slug')
         if category_slug:
             category = get_object_or_404(Category, slug=category_slug)
             context['category'] = category
@@ -47,6 +48,16 @@ class ProductDetailView(DetailView):
         if not obj.available:
             raise Http404("Product does not exist")
         return obj
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cart_product_form = CartAddProductForm()
+        context['cart_product_form'] = cart_product_form
+        return context
+
+
+
+
 
 
 # def load_products(request):
