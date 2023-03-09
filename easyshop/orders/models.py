@@ -16,6 +16,10 @@ class Order(models.Model):
     class Meta:
         ordering = ('-created',)
 
+    def __repr__(self):
+        return (f'{self.__class__.__name__}('
+                f'{self.id}, {self.first_name!r} {self.last_name!r})')
+
     def __str__(self):
         return f'Order {self.id}'
 
@@ -33,6 +37,10 @@ class OrderItem(models.Model):
                                 on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField(default=1)
+
+    def __repr__(self):
+        return (f'{self.__class__.__name__}('
+                f'{self.id})')
 
     def __str__(self):
         return str(self.id)

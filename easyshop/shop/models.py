@@ -17,6 +17,10 @@ class Category(models.Model):
         verbose_name = 'category'
         verbose_name_plural = 'categories'
 
+    def __repr__(self):
+        return (f'{self.__class__.__name__}('
+                f'{self.name!r})')
+
     def __str__(self):
         return self.name
 
@@ -41,13 +45,19 @@ class Product(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
-    def get_absolute_url(self):
-        return reverse('shop:product_detail',
-                       args=[self.id, self.slug])
-
     class Meta:
         ordering = ('name',)
         index_together = (('id', 'slug'),)
 
+    def __repr__(self):
+        return (f'{self.__class__.__name__}('
+                f'{self.name!r}, {self.category!r})')
+
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('shop:product_detail',
+                       args=[self.id, self.slug])
+
+
