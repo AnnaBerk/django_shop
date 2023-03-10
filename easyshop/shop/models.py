@@ -25,6 +25,11 @@ class Category(models.Model):
         return self.name
 
 
+class ProductManager(models.Manager):
+    def get_queryset(self):
+        return super(ProductManager, self).get_queryset().filter(available=True).select_related('category')
+
+
 class Product(models.Model):
     category = models.ForeignKey(
         Category,
@@ -44,6 +49,8 @@ class Product(models.Model):
     available = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+    products = ProductManager()
 
     class Meta:
         ordering = ('name',)
