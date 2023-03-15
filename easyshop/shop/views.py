@@ -48,20 +48,3 @@ class ProductDetailView(DetailView):
         context['cart_product_form'] = cart_product_form
         return context
 
-
-
-
-
-
-# def load_products(request):
-#     r = requests.get('https://fakestoreapi.com/products')
-#     for item in r.json():
-#         product = Product(
-#             name=item['title'],
-#             description=item['description'],
-#             price=item['price'],
-#             image=item['image'],
-#             stock=10,
-#         )
-#         product.save()
-#     return render(request, 'shop/product/list.html')
