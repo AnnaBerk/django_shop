@@ -23,7 +23,7 @@ class Cart:
         Iterates over the items in the cart and retrieves the corresponding products from the database
         """
         product_ids = self.cart.keys()
-        products = Product.objects.filter(id__in=product_ids)
+        products = Product.products.filter(id__in=product_ids)
         for product in products:
             product_id = str(product.id)
             self.cart[product_id]['product'] = product
