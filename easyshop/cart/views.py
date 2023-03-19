@@ -1,33 +1,25 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from shop.models import Product
 from .cart import Cart
 from .forms import CartAddProductForm
+from .service import CartService
 
 
 @require_POST
 def cart_add(request, product_id):
-
     cart = Cart(request)
-    product = get_object_or_404(Product, id=product_id)
     cart_form = CartAddProductForm(request.POST)
     if cart_form.is_valid():
         cleaned_data = cart_form.cleaned_data
-        cart.add(
-            product=product,
-            quantity=cleaned_data['quantity'],
-            update_quantity=cleaned_data['update']
-        )
-
+        CartService().add_to_cart(cart, product_id, cleaned_data['quantity'], cleaned_data['update'])
     return redirect('cart:cart_detail')
 
 
 @require_POST
 def cart_remove(request, product_id):
     cart = Cart(request)
-    product = get_object_or_404(Product, id=product_id)
-    cart.remove(product)
+    CartService().remove_from_cart(cart, product_id)
     return redirect('cart:cart_detail')
 
 
@@ -38,13 +30,3 @@ def cart_detail(request):
             'quantity': item['quantity'],
             'update': True})
     return render(request, 'cart/detail.html', {'cart': cart})
-
-
-def product_detail(request, id, slug):
-    product = get_object_or_404(Product,
-                                id=id,
-                                slug=slug,
-                                available=True)
-    cart_product_form = CartAddProductForm()
-    return render(request, 'shop/product/detail.html', {'product': product,
-                                                        'cart_product_form': cart_product_form})
