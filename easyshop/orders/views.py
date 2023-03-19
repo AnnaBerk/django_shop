@@ -3,8 +3,6 @@ from .forms import OrderCreateForm
 from cart.cart import Cart
 from shop.service import OrderService
 
-from .models import OrderItem
-
 
 def order_create(request):
     cart = Cart(request)
