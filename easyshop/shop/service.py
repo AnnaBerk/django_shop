@@ -1,27 +1,28 @@
-from django.db import transaction
-from orders.models import OrderItem
-from orders.tasks import order_created
+from django.shortcuts import get_object_or_404
+from .models import Product, Category
+from typing import List
+
+from shop.models import Category
+class ProductService:
+    def get_all_products(self):
+        fields = ['id', 'slug', 'name', 'price', 'image', 'category']
+        return Product.products.only(*fields)
+
+    def get_product_by_slug(self, slug):
+        fields = ['id', 'slug', 'name', 'price', 'image', 'category']
+        product = get_object_or_404(Product.products.only(*fields), slug=slug)
+        return product
+
+    def get_products_by_category_slug(self, category_slug):
+
+        return Product.products.filter(category__slug=category_slug)
 
 
-class OrderService:
+class CategoryService:
     @staticmethod
-    def create_order(request, form, cart):
-        if form.is_valid():
-            order = form.save()
-            OrderService.create_order_items(order, cart)
-            cart.clear()
-            order_created.delay(order.id)
-            return order
-        else:
-            raise Exception('Invalid form data')
+    def get_categories() -> List[Category]:
+        return Category.objects.all()
 
     @staticmethod
-    @transaction.atomic
-    def create_order_items(order, cart):
-        for item in cart:
-            OrderItem.objects.create(
-                order=order,
-                product=item['product'],
-                price=item['price'],
-                quantity=item['quantity']
-            )
+    def get_category_by_slug(slug: str) -> Category:
+        return get_object_or_404(Category, slug=slug)
